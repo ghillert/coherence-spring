@@ -57,7 +57,7 @@ public class CoherenceConfigClientProperties {
 	/**
 	 * Name of the Coherence session used to fetch remote properties from. If not set, the default session is used.
 	 */
-	private String sessionName;
+	private String sessionName = "";
 
 	/**
 	 * Name of the Coherence scope used to fetch remote properties from. If not set, the default scope is used.
@@ -68,11 +68,6 @@ public class CoherenceConfigClientProperties {
 	 * Flag to indicate that failure to connect to the server is fatal (default false).
 	 */
 	private boolean failFast = false;
-
-	/**
-	 * Contains gRPC-specific configuration.
-	 */
-	private GrpcClientProperties client = new GrpcClientProperties();
 
 	/**
 	 * The default profile to use when fetching remote configuration (comma-separated).
@@ -113,18 +108,6 @@ public class CoherenceConfigClientProperties {
 	}
 
 	/**
-	 * Contains gRPC-specific configuration.
-	 * @return the gRPC-specific configuration properties
-	 */
-	public GrpcClientProperties getClient() {
-		return this.client;
-	}
-
-	public void setClient(GrpcClientProperties client) {
-		this.client = client;
-	}
-
-	/**
 	 * Name of the application used to fetch remote properties.
 	 * @return the name of the application to retrieve remote properties for
 	 */
@@ -158,72 +141,5 @@ public class CoherenceConfigClientProperties {
 
 	public void setScopeName(String scopeName) {
 		this.scopeName = scopeName;
-	}
-
-	/**
-	 * Coherence gRPC client configuration.
-	 */
-	public static class GrpcClientProperties {
-
-		private String host = "localhost";
-		private int port = 1408;
-		private boolean enableTls = false;
-
-		/**
-		 * Returns host name of gRPC server.
-		 * @return host name
-		 */
-		public String getHost() {
-			return this.host;
-		}
-
-		/**
-		 * Sets host name of gRPC server.
-		 * @param host host name
-		 */
-		public void setHost(String host) {
-			this.host = host;
-		}
-
-		/**
-		 * Gets gRPC server port.
-		 * @return port
-		 */
-		public int getPort() {
-			return this.port;
-		}
-
-		/**
-		 * Sets gRPC server port.
-		 * @param port port
-		 */
-		public void setPort(int port) {
-			this.port = port;
-		}
-
-		/**
-		 * Returns true if TLS is enabled.
-		 * @return true if TLS is enabled
-		 */
-		public boolean isEnableTls() {
-			return this.enableTls;
-		}
-
-		/**
-		 * Enables TLS support.
-		 * @param enableTls if not set, defaults to true. Set to false to disable TLS.
-		 */
-		public void setEnableTls(boolean enableTls) {
-			this.enableTls = enableTls;
-		}
-
-		@Override
-		public String toString() {
-			return "CoherenceClientConfiguration{" +
-					"host='" + this.host + '\'' +
-					", port=" + this.port +
-					", enableTls=" + this.enableTls +
-					'}';
-		}
 	}
 }

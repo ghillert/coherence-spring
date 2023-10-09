@@ -17,19 +17,16 @@ import com.oracle.bedrock.runtime.java.options.SystemProperty;
 import com.oracle.bedrock.runtime.options.DisplayName;
 import com.oracle.coherence.grpc.proxy.GrpcServerController;
 import com.oracle.coherence.spring.configuration.annotation.EnableCoherence;
-import com.oracle.coherence.spring.configuration.session.GrpcSessionConfigurationBean;
+import com.oracle.coherence.spring.configuration.session.SessionConfigurationBean;
+import com.oracle.coherence.spring.configuration.session.SessionType;
 import com.oracle.coherence.spring.session.config.annotation.web.http.EnableCoherenceHttpSession;
 import com.oracle.coherence.spring.test.utils.NetworkUtils;
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 
@@ -42,13 +39,19 @@ import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 @SpringJUnitWebConfig
 class PofCoherenceIndexedSessionRepositoryTests extends AbstractCoherenceIndexedSessionRepositoryTests {
 
+	static final String CLUSTER_NAME = "PofCoherenceIndexedSessionRepositoryTestsCluster";
+
 	static CoherenceClusterMember server;
 
 	PofCoherenceIndexedSessionRepositoryTests() {
 		super.sessionName = "grpcSession";
 	}
 
-	@BeforeAll
+	protected String getLocalClusterName() {
+		return CLUSTER_NAME;
+	}
+
+@BeforeAll
 	static void setup() {
 		final LocalPlatform platform = LocalPlatform.get();
 
@@ -57,7 +60,7 @@ class PofCoherenceIndexedSessionRepositoryTests extends AbstractCoherenceIndexed
 				CacheConfig.of("server-coherence-cache-config.xml"),
 				LocalHost.only(),
 				IPv4Preferred.yes(),
-				SystemProperty.of("coherence.cluster", "PofCoherenceIndexedSessionRepositoryTestsCluster"),
+				SystemProperty.of("coherence.cluster", CLUSTER_NAME),
 				SystemProperty.of("coherence.grpc.enabled", true),
 				SystemProperty.of("coherence.grpc.server.port", "1408"),
 				SystemProperty.of("coherence.wka", "127.0.0.1"),
@@ -80,25 +83,14 @@ class PofCoherenceIndexedSessionRepositoryTests extends AbstractCoherenceIndexed
 	@Configuration
 	@EnableCoherenceHttpSession(session = "grpcSession")
 	@EnableCoherence
-	static class CoherenceConfig {
+	static class Config {
 		@Bean
-		@DependsOn("grpcChannel")
-		GrpcSessionConfigurationBean sessionConfigurationBean(ConfigurableApplicationContext context) {
-			GrpcSessionConfigurationBean sessionConfigurationBean = new GrpcSessionConfigurationBean("grpcSession", context);
-			sessionConfigurationBean.setChannelName("grpcChannel");
+		SessionConfigurationBean grpcSessionConfigurationBean() {
+			final SessionConfigurationBean sessionConfigurationBean = new SessionConfigurationBean();
 			sessionConfigurationBean.setName("grpcSession");
+			sessionConfigurationBean.setConfig("grpc-test-coherence-cache-config.xml");
+			sessionConfigurationBean.setType(SessionType.CLIENT);
 			return sessionConfigurationBean;
 		}
-
-		@Bean
-		ManagedChannel grpcChannel() {
-			final String host = "localhost";
-			final int port = 1408;
-
-			final ManagedChannelBuilder<?> channelBuilder = ManagedChannelBuilder.forAddress(host, port);
-			channelBuilder.usePlaintext();
-			return channelBuilder.build();
-		}
 	}
-
 }

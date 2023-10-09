@@ -12,7 +12,6 @@ import java.util.List;
 import com.oracle.coherence.spring.boot.autoconfigure.CoherenceProperties;
 import com.oracle.coherence.spring.boot.autoconfigure.support.LogType;
 import com.oracle.coherence.spring.configuration.session.ClientSessionConfigurationBean;
-import com.oracle.coherence.spring.configuration.session.GrpcSessionConfigurationBean;
 import com.oracle.coherence.spring.configuration.session.ServerSessionConfigurationBean;
 import com.oracle.coherence.spring.configuration.session.SessionType;
 import com.oracle.coherence.spring.configuration.support.CoherenceInstanceType;
@@ -40,7 +39,6 @@ public class CoherencePropertiesTests {
 	void testCoherencePropertiesWithSessions() {
 		final List<ServerSessionConfigurationBean> serverSessions = this.coherenceProperties.getSessions().getServer();
 		final List<ClientSessionConfigurationBean> clientSessions = this.coherenceProperties.getSessions().getClient();
-		final List<GrpcSessionConfigurationBean> grpcSessions = this.coherenceProperties.getSessions().getGrpc();
 
 		assertThat(serverSessions).hasSize(3);
 		assertThat(serverSessions.get(0).getName()).isEqualTo("default");
@@ -65,10 +63,6 @@ public class CoherencePropertiesTests {
 		assertThat(clientSessions.get(0).getScopeName()).isEqualTo("client-scope");
 		assertThat(clientSessions.get(0).getPriority()).isEqualTo(3);
 		assertThat(clientSessions.get(0).getType()).isEqualTo(SessionType.CLIENT);
-
-		assertThat(grpcSessions).hasSize(1);
-		assertThat(grpcSessions.get(0).getName()).isEqualTo("grpc-session");
-		assertThat(grpcSessions.get(0).getType()).isEqualTo(SessionType.GRPC);
 	}
 
 	@Test

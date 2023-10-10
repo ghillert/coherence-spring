@@ -50,6 +50,10 @@ public class CoherenceConfigDataLoaderTests {
 	@Autowired
 	private Environment env;
 
+	static {
+		System.setProperty("test-cluster-name", "CoherenceConfigDataLoaderTests");
+	}
+
 	@BeforeAll
 	static void setup() throws Exception {
 		final LocalPlatform platform = LocalPlatform.get();

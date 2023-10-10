@@ -60,9 +60,7 @@ public class CoherenceGrpcClientTests {
 	@Test
 	public void testCoherenceGrpcClient() throws Exception {
 		final CoherenceConfigClientProperties coherenceConfigClientProperties = new CoherenceConfigClientProperties();
-		coherenceConfigClientProperties.getClient().setHost("localhost");
-		coherenceConfigClientProperties.getClient().setPort(1408);
-		coherenceConfigClientProperties.getClient().setEnableTls(false);
+		coherenceConfigClientProperties.setCacheConfig("grpc-test-coherence-cache-config.xml");
 
 		final CoherenceGrpcClient coherenceGrpcClient = new CoherenceGrpcClient(coherenceConfigClientProperties);
 		final Session grpcCoherenceSession = coherenceGrpcClient.getCoherenceSession();

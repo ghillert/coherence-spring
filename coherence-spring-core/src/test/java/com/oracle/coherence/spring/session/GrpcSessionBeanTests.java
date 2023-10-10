@@ -19,7 +19,7 @@ import com.oracle.bedrock.runtime.options.DisplayName;
 import com.oracle.coherence.grpc.proxy.GrpcServerController;
 import com.oracle.coherence.spring.configuration.annotation.CoherenceCache;
 import com.oracle.coherence.spring.configuration.annotation.EnableCoherence;
-import com.oracle.coherence.spring.configuration.session.GrpcSessionConfigurationBean;
+import com.oracle.coherence.spring.configuration.session.ClientSessionConfigurationBean;
 import com.oracle.coherence.spring.test.utils.NetworkUtils;
 import com.tangosol.net.Coherence;
 import com.tangosol.net.NamedCache;
@@ -52,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class GrpcSessionBeanTests {
 	static CoherenceClusterMember server;
 
-	@CoherenceCache(session = GrpcSessionConfigurationBean.DEFAULT_SESSION_NAME)
+	@CoherenceCache(session = "grpcSession")
 	private NamedCache<String, String> fooMap;
 
 	@Autowired
@@ -96,9 +96,9 @@ public class GrpcSessionBeanTests {
 	@EnableCoherence
 	static class Config {
 		@Bean
-		GrpcSessionConfigurationBean grpcSessionConfigurationBean() {
-			final GrpcSessionConfigurationBean sessionConfigurationBean = new GrpcSessionConfigurationBean();
-			sessionConfigurationBean.setName(GrpcSessionConfigurationBean.DEFAULT_SESSION_NAME);
+		ClientSessionConfigurationBean grpcSessionConfigurationBean() {
+			final ClientSessionConfigurationBean sessionConfigurationBean = new ClientSessionConfigurationBean();
+			sessionConfigurationBean.setName("grpcSession");
 			return sessionConfigurationBean;
 		}
 	}

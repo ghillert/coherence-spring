@@ -17,7 +17,7 @@ import com.oracle.bedrock.runtime.java.options.SystemProperty;
 import com.oracle.bedrock.runtime.options.DisplayName;
 import com.oracle.coherence.grpc.proxy.GrpcServerController;
 import com.oracle.coherence.spring.configuration.annotation.EnableCoherence;
-import com.oracle.coherence.spring.configuration.session.GrpcSessionConfigurationBean;
+import com.oracle.coherence.spring.configuration.session.ClientSessionConfigurationBean;
 import com.oracle.coherence.spring.session.config.annotation.web.http.EnableCoherenceHttpSession;
 import com.oracle.coherence.spring.test.utils.NetworkUtils;
 import org.awaitility.Awaitility;
@@ -81,8 +81,8 @@ public class GrpcSessionCoherenceIndexedSessionRepositoryTests extends AbstractC
 	@EnableCoherence
 	static class CoherenceConfig {
 		@Bean
-		GrpcSessionConfigurationBean sessionConfigurationBean() {
-			GrpcSessionConfigurationBean sessionConfigurationBean = new GrpcSessionConfigurationBean();
+		ClientSessionConfigurationBean sessionConfigurationBean() {
+			ClientSessionConfigurationBean sessionConfigurationBean = new ClientSessionConfigurationBean();
 			sessionConfigurationBean.setName("grpcSession");
 			return sessionConfigurationBean;
 		}

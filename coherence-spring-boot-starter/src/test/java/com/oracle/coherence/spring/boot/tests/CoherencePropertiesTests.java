@@ -64,7 +64,6 @@ public class CoherencePropertiesTests {
 		assertThat(clientSessions.get(0).getPriority()).isEqualTo(3);
 		assertThat(clientSessions.get(0).getType()).isEqualTo(SessionType.CLIENT);
 
-		//TODO
 //		assertThat(grpcSessions).hasSize(1);
 //		assertThat(grpcSessions.get(0).getName()).isEqualTo("grpc-session");
 //		assertThat(grpcSessions.get(0).getType()).isEqualTo(SessionType.GRPC);

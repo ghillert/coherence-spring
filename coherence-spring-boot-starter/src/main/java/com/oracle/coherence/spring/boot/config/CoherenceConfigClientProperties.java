@@ -48,7 +48,7 @@ public class CoherenceConfigClientProperties {
 	/**
 	 * Name of the Coherence session used to fetch remote properties from. If not set, the default session is used.
 	 */
-	private String sessionName;
+	private String sessionName = "";
 
 	/**
 	 * Name of the Coherence scope used to fetch remote properties from. If not set, the default scope is used.

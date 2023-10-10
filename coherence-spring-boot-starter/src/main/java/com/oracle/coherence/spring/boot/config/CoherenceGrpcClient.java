@@ -10,9 +10,6 @@ import java.util.Optional;
 
 import com.tangosol.net.Session;
 import com.tangosol.net.SessionConfiguration;
-import io.grpc.Channel;
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -71,6 +68,6 @@ public class CoherenceGrpcClient implements AutoCloseable {
 
 	@Override
 	public void close() {
-		// this.grpcChannel.shutdownNow();
+		// this.grpcChannel.shutdownNow(); TODO
 	}
 }

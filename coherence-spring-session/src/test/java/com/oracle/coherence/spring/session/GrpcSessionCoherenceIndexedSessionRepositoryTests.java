@@ -18,6 +18,7 @@ import com.oracle.bedrock.runtime.options.DisplayName;
 import com.oracle.coherence.grpc.proxy.GrpcServerController;
 import com.oracle.coherence.spring.configuration.annotation.EnableCoherence;
 import com.oracle.coherence.spring.configuration.session.ClientSessionConfigurationBean;
+import com.oracle.coherence.spring.configuration.session.SessionType;
 import com.oracle.coherence.spring.session.config.annotation.web.http.EnableCoherenceHttpSession;
 import com.oracle.coherence.spring.test.utils.NetworkUtils;
 import org.awaitility.Awaitility;
@@ -40,6 +41,8 @@ import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 @SpringJUnitWebConfig
 public class GrpcSessionCoherenceIndexedSessionRepositoryTests extends AbstractCoherenceIndexedSessionRepositoryTests {
 
+	static final String CLUSTER_NAME = "GrpcSessionCoherenceIndexedSessionRepositoryTestsCluster";
+
 	static CoherenceClusterMember server;
 
 	@Autowired
@@ -47,6 +50,10 @@ public class GrpcSessionCoherenceIndexedSessionRepositoryTests extends AbstractC
 
 	public GrpcSessionCoherenceIndexedSessionRepositoryTests() {
 		super.sessionName = "grpcSession";
+	}
+
+	protected String getLocalClusterName() {
+		return CLUSTER_NAME;
 	}
 
 	@BeforeAll
@@ -58,7 +65,7 @@ public class GrpcSessionCoherenceIndexedSessionRepositoryTests extends AbstractC
 				CacheConfig.of("server-coherence-cache-config.xml"),
 				LocalHost.only(),
 				IPv4Preferred.yes(),
-				SystemProperty.of("coherence.cluster", "GrpcSessionCoherenceIndexedSessionRepositoryTestsCluster"),
+				SystemProperty.of("coherence.cluster", CLUSTER_NAME),
 				SystemProperty.of("coherence.grpc.enabled", true),
 				SystemProperty.of("coherence.grpc.server.port", "1408"),
 				SystemProperty.of("coherence.wka", "127.0.0.1"),
@@ -79,13 +86,14 @@ public class GrpcSessionCoherenceIndexedSessionRepositoryTests extends AbstractC
 	@Configuration
 	@EnableCoherenceHttpSession(session = "grpcSession")
 	@EnableCoherence
-	static class CoherenceConfig {
+	static class Config {
 		@Bean
 		ClientSessionConfigurationBean sessionConfigurationBean() {
 			ClientSessionConfigurationBean sessionConfigurationBean = new ClientSessionConfigurationBean();
 			sessionConfigurationBean.setName("grpcSession");
+			sessionConfigurationBean.setConfig("grpc-test-coherence-cache-config.xml");
+			sessionConfigurationBean.setType(SessionType.CLIENT);
 			return sessionConfigurationBean;
 		}
 	}
-
 }

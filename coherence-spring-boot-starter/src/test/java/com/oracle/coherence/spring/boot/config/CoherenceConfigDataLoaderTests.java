@@ -15,6 +15,7 @@ import com.oracle.bedrock.runtime.coherence.options.LocalHost;
 import com.oracle.bedrock.runtime.java.options.IPv4Preferred;
 import com.oracle.bedrock.runtime.java.options.SystemProperty;
 import com.oracle.bedrock.runtime.options.DisplayName;
+import com.oracle.coherence.spring.configuration.annotation.EnableCoherence;
 import com.oracle.coherence.spring.test.utils.NetworkUtils;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterAll;
@@ -36,7 +37,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  */
 @SpringBootTest(
-		properties = { "coherence.tcmp.enabled=false" },
+		properties = { "coherence.tcmp.enabled=false",
+						"coherence.cluster=CoherenceConfigDataLoaderTests",
+						"coherence.client=grpc"
+		},
 		classes = {
 			CoherenceConfigDataLoaderTests.DataLoaderConfig.class,
 			CoherenceConfigClientProperties.class
@@ -92,7 +96,7 @@ public class CoherenceConfigDataLoaderTests {
 	}
 
 	@Configuration
+	@EnableCoherence
 	static class DataLoaderConfig {
 	}
-
 }

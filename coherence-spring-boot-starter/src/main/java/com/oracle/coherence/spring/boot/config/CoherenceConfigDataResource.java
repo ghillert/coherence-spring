@@ -10,8 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.oracle.coherence.spring.configuration.annotation.EnableCoherence;
+import com.oracle.coherence.spring.configuration.session.SessionConfigurationBean;
+
 import org.springframework.boot.context.config.ConfigDataResource;
 import org.springframework.boot.context.config.Profiles;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.StringUtils;
 
@@ -84,6 +89,17 @@ public class CoherenceConfigDataResource extends ConfigDataResource {
 				.append("sessionName", this.properties.getSessionName())
 				.append("cacheConfig", this.properties.getCacheConfig())
 				.append("profiles", this.profiles.getAccepted()).toString();
+	}
 
+	@Configuration
+	@EnableCoherence
+	static class CoherenceConfig {
+		@Bean
+		SessionConfigurationBean sessionConfigurationBean() {
+			SessionConfigurationBean sessionConfigurationBean = new SessionConfigurationBean();
+			sessionConfigurationBean.setName("");
+
+			return sessionConfigurationBean;
+		}
 	}
 }

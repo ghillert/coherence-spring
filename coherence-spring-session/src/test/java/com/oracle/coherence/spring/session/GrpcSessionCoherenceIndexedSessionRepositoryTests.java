@@ -18,7 +18,6 @@ import com.oracle.bedrock.runtime.options.DisplayName;
 import com.oracle.coherence.grpc.proxy.GrpcServerController;
 import com.oracle.coherence.spring.configuration.annotation.EnableCoherence;
 import com.oracle.coherence.spring.configuration.session.ClientSessionConfigurationBean;
-import com.oracle.coherence.spring.configuration.session.SessionType;
 import com.oracle.coherence.spring.session.config.annotation.web.http.EnableCoherenceHttpSession;
 import com.oracle.coherence.spring.test.utils.NetworkUtils;
 import org.awaitility.Awaitility;
@@ -30,6 +29,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 
 /**
@@ -39,6 +39,10 @@ import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
  */
 @DirtiesContext
 @SpringJUnitWebConfig
+@TestPropertySource(properties = {
+		"coherence.tcmp.enabled = 'false'",
+		"coherence-spring.test-cluster-name = " + GrpcSessionCoherenceIndexedSessionRepositoryTests.CLUSTER_NAME
+})
 public class GrpcSessionCoherenceIndexedSessionRepositoryTests extends AbstractCoherenceIndexedSessionRepositoryTests {
 
 	static final String CLUSTER_NAME = "GrpcSessionCoherenceIndexedSessionRepositoryTestsCluster";
@@ -89,10 +93,9 @@ public class GrpcSessionCoherenceIndexedSessionRepositoryTests extends AbstractC
 	static class Config {
 		@Bean
 		ClientSessionConfigurationBean sessionConfigurationBean() {
-			ClientSessionConfigurationBean sessionConfigurationBean = new ClientSessionConfigurationBean();
+			final ClientSessionConfigurationBean sessionConfigurationBean = new ClientSessionConfigurationBean();
 			sessionConfigurationBean.setName("grpcSession");
 			sessionConfigurationBean.setConfig("grpc-test-coherence-cache-config.xml");
-			sessionConfigurationBean.setType(SessionType.CLIENT);
 			return sessionConfigurationBean;
 		}
 	}

@@ -20,6 +20,7 @@ import com.oracle.coherence.grpc.proxy.GrpcServerController;
 import com.oracle.coherence.spring.configuration.annotation.CoherenceCache;
 import com.oracle.coherence.spring.configuration.annotation.EnableCoherence;
 import com.oracle.coherence.spring.configuration.session.ClientSessionConfigurationBean;
+import com.oracle.coherence.spring.configuration.session.SessionConfigurationBean;
 import com.oracle.coherence.spring.test.utils.NetworkUtils;
 import com.tangosol.net.Coherence;
 import com.tangosol.net.NamedCache;
@@ -46,11 +47,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringJUnitConfig(GrpcSessionBeanTests.Config.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestPropertySource(properties = {
-		"coherence.tcmp.enabled = 'false'"
+		"coherence.tcmp.enabled = 'false'",
+		"coherence-spring.test-cluster-name = " + GrpcSessionBeanTests.COHERENCE_CLUSTER_NAME
 })
 @DirtiesContext
 public class GrpcSessionBeanTests {
 	static CoherenceClusterMember server;
+
+	public static final String COHERENCE_CLUSTER_NAME = "GrpcSessionBeanTestsCluster";
 
 	@CoherenceCache(session = "grpcSession")
 	private NamedCache<String, String> fooMap;
@@ -66,7 +70,7 @@ public class GrpcSessionBeanTests {
 		server = platform.launch(CoherenceClusterMember.class,
 				LocalHost.only(),
 				IPv4Preferred.yes(),
-				SystemProperty.of("coherence.cluster", "GrpcSessionBeanTestsCluster"),
+				SystemProperty.of("coherence.cluster", COHERENCE_CLUSTER_NAME),
 				SystemProperty.of("coherence.grpc.enabled", true),
 				SystemProperty.of("coherence.grpc.server.port", "1408"),
 				SystemProperty.of("coherence.wka", "127.0.0.1"),
@@ -88,7 +92,7 @@ public class GrpcSessionBeanTests {
 	@Order(1)
 	public void testBasicGrpcClient() throws Exception {
 		this.fooMap.put("foo", "bar");
-		final Map<String, String> mapFromCoherence = server.getSession().getMap("fooMap");
+		final Map<String, String> mapFromCoherence = this.server.getSession().getMap("fooMap");
 		assertEquals("bar", mapFromCoherence.get("foo"));
 	}
 
@@ -98,6 +102,8 @@ public class GrpcSessionBeanTests {
 		@Bean
 		ClientSessionConfigurationBean grpcSessionConfigurationBean() {
 			final ClientSessionConfigurationBean sessionConfigurationBean = new ClientSessionConfigurationBean();
+			sessionConfigurationBean.setName(SessionConfigurationBean.DEFAULT_SESSION_NAME);
+			sessionConfigurationBean.setConfig("grpc-core-test-coherence-cache-config.xml");
 			sessionConfigurationBean.setName("grpcSession");
 			return sessionConfigurationBean;
 		}

@@ -141,7 +141,7 @@ public class CoherenceConfigClientProperties {
 	}
 
 	public String getCacheConfig() {
-		return cacheConfig;
+		return this.cacheConfig;
 	}
 
 	public void setCacheConfig(String cacheConfig) {

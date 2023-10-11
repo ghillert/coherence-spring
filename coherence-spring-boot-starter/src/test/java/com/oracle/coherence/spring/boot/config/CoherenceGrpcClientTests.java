@@ -35,6 +35,9 @@ public class CoherenceGrpcClientTests {
 
 	@BeforeAll
 	static void setup() throws Exception {
+
+		System.setProperty("coherence.tcmp.enabled", "false");
+
 		final LocalPlatform platform = LocalPlatform.get();
 
 		// Start the Coherence server
@@ -58,7 +61,7 @@ public class CoherenceGrpcClientTests {
 	}
 
 	@Test
-	public void testCoherenceGrpcClient() throws Exception {
+	public void testCoherenceGrpcClient() {
 		final CoherenceConfigClientProperties coherenceConfigClientProperties = new CoherenceConfigClientProperties();
 		coherenceConfigClientProperties.setCacheConfig("grpc-test-coherence-cache-config.xml");
 

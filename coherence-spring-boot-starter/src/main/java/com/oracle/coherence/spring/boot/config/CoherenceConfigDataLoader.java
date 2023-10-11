@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2021 original authors
+ * Copyright 2017-2023 original authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.tangosol.net.Coherence;
 import com.tangosol.net.Session;
 
 import org.springframework.boot.context.config.ConfigData;
@@ -42,8 +41,9 @@ public class CoherenceConfigDataLoader implements ConfigDataLoader<CoherenceConf
 	}
 
 	public List<PropertySource<?>> getPropertySources(CoherenceConfigDataResource resource) {
-		try (Session session = Coherence.findSession(resource.getProperties().getSessionName()).orElseThrow()) {
+		try (CoherenceGrpcClient coherenceGrpcClient = new CoherenceGrpcClient(resource.getProperties())) {
 			final List<String> keys = this.buildSourceNames(resource);
+			final Session session = coherenceGrpcClient.getCoherenceSession();
 			return keys.stream()
 					.map((propertySourceName) ->
 								new MapPropertySource(

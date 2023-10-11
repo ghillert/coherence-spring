@@ -8,6 +8,8 @@ package com.oracle.coherence.spring.boot.config;
 
 import java.util.Optional;
 
+import com.tangosol.net.Coherence;
+import com.tangosol.net.CoherenceConfiguration;
 import com.tangosol.net.Session;
 import com.tangosol.net.SessionConfiguration;
 import org.apache.commons.logging.Log;
@@ -27,6 +29,7 @@ public class CoherenceGrpcClient implements AutoCloseable {
 	protected static final Log logger = LogFactory.getLog(CoherenceGrpcClient.class);
 
 	private final Session coherenceSession;
+	private Coherence coherence;
 
 	public CoherenceGrpcClient(CoherenceConfigClientProperties coherenceConfigClientProperties) {
 		this.coherenceSession = buildSession(coherenceConfigClientProperties);
@@ -60,14 +63,30 @@ public class CoherenceGrpcClient implements AutoCloseable {
 
 		final SessionConfiguration grpcSessionConfiguration = builder.build();
 
-		final Optional<Session> optional = Session.create(grpcSessionConfiguration);
-		return optional.orElseGet(() -> {
-			throw new IllegalStateException("Unable to create session.");
-		});
+		final CoherenceConfiguration cfg = CoherenceConfiguration.builder()
+				.withSession(grpcSessionConfiguration)
+				.build();
+
+		this.coherence = Coherence.client(cfg);
+		this.coherence.start().join();
+		try {
+			Thread.sleep(5000); //TODO
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+		if (StringUtils.hasText(coherenceConfigClientProperties.getSessionName())) {
+			return this.coherence.getSession(coherenceConfigClientProperties.getSessionName());
+		}
+		else {
+			return this.coherence.getSession();
+		}
+
 	}
 
 	@Override
 	public void close() {
-		// this.grpcChannel.shutdownNow(); TODO
+		if (this.coherence != null) {
+			this.coherence.close();
+		}
 	}
 }
